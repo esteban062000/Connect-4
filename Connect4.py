@@ -1,5 +1,5 @@
-import os
-from datetime import datetime
+from Connect4Utils import Connect4UtilsClass as Utils
+import Constants 
 
 class Connect4:
 
@@ -7,15 +7,27 @@ class Connect4:
       '''
       Players: Random, Minimax, Human
       '''
-      validPlayers = ['R', 'M', 'H']
+      validPlayers = [Constants.PLAYER_MINIMAX, Constants.PLAYER_HUMAN, Constants.PLAYER_RANDOM]
       if(player1 in validPlayers and player2 in validPlayers):
          self.player1 = player1
          self.player2 = player2 
       else:
          raise TypeError("Digite un jugador valido")
-      
-      self.now = datetime.now().strftime("%d-%m-%Y%H%M%S")
-      filename = f"./TrainingFiles/{self.now}{gameIndex}.txt"
-      os.makedirs(os.path.dirname(filename), exist_ok=True)
-      with open(filename, "w") as f:
-         f.write("FOOBAR")
+      self.utils = Utils(gameIndex)
+      self.utils.createFile()
+      self.gameboard = self.utils.createGameBoard()
+
+   def beginGame(self):
+      turnNumber = 1
+      activePlayer = ''
+      players = []
+      if (self.utils.computerGoesFirst()):
+         players.append(self.player1)
+         players.append(self.player2)
+      else:
+         players.append(self.player2)
+         players.append(self.player1)
+      while self.utils.getGameResult(self.gameboard) == Constants.GAME_STATE_NOT_ENDED:
+         activePlayer = players[turnNumber % 2]
+         turnNumber += 1
+   
