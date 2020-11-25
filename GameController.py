@@ -12,6 +12,7 @@ def main():
 
     for i in range(games):
         game = Connect4Game(Constants.PLAYER_MINIMAX, player2, i)
+        game.beginGame()
 
     return 0
 

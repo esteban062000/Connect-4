@@ -1,5 +1,6 @@
 from Connect4Utils import Connect4UtilsClass as Utils
 import Constants
+import random
 
 
 class Connect4:
@@ -30,22 +31,44 @@ class Connect4:
             players.append(self.player2)
             players.append(self.player1)
         while self.getGameResult(self.gameboard) == Constants.GAME_STATE_NOT_ENDED:
+            # Se escoje al jugador actual
             activePlayer = players[turnNumber % 2]
+            availableMoves = self.getAvailableMoves()
+            move = self.getMove(activePlayer, availableMoves)
+
             turnNumber += 1
 
     def computerGoesFirst(self):
-        return print("hello")
+        return random.randint(0, 1)
 
-    def getAvailableMoves(self, gameboard):
+    # Devuelve un vector con las tuplas de movimientos legales dado un estado de juego
+    def getAvailableMoves(self):
         availableMoves = []
         for j in range(Constants.NUM_COLUMNS):
-            if gameboard[Constants.NUM_ROWS - 1][j] == Constants.EMPTY_VAL:
+            if self.gameboard[Constants.NUM_ROWS - 1][j] == Constants.EMPTY_VAL:
                 availableMoves.append([Constants.NUM_ROWS - 1, j])
             else:
                 for i in range(Constants.NUM_ROWS - 1):
-                    if gameboard[i][j] == Constants.EMPTY_VAL and gameboard[i + 1][j] != Constants.EMPTY_VAL:
+                    if self.gameboard[i][j] == Constants.EMPTY_VAL and self.gameboard[i + 1][j] != Constants.EMPTY_VAL:
                         availableMoves.append([i, j])
         return availableMoves
+
+    def estrategia_M(self, movimientosLegales):
+        print("Hola M")
+        return 'a'
+
+    def estrategia_H(self, movimientosLegales):
+        print("Hola H")
+        return 'a'
+
+    def estrategia_R(self, movimientosLegales):
+        print("Hola R")
+        return 'a'
+
+    # Define cual va a ser el movimiento de un jugador dado el estado de juego y estrategia
+    def getMove(self, estrategia, movimientosLegales):
+        return getattr(
+            self, f"estrategia_{estrategia}", lambda: "Entrada inválida")(movimientosLegales)
 
     def getGameResult(self, gameboard):
         winnerFound = False
