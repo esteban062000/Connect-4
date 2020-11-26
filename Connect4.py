@@ -58,6 +58,11 @@ class Connect4:
                 gameover = True
             turnNumber += 1
 
+            if(activePlayer == Constants.PLAYER_MINIMAX):
+                text = self.utils.gameboardToTXT(self.gameboard)
+                text += str(collumnToPlay)
+                self.utils.writeFile(text)
+
         print(
             f"Player {activePlayer} wins the game in {math.ceil((turnNumber - 1)/2)} turns!")
 

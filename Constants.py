@@ -14,7 +14,7 @@ NUM_ROWS = 6
 WINDOW_LENGTH = 4
 
 # MINMAX DEPTH
-MINIMAX_DEPTH = 5  # si le pone 6 explota, que tan adelante quiere ver
+MINIMAX_DEPTH = 3  # si le pone 6 explota, que tan adelante quiere ver
 
 # General use constants
 LAST_AVAILABLE_ROW = 0

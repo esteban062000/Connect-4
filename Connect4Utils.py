@@ -17,8 +17,10 @@ class Connect4UtilsClass:
         f = open(self.fileName, "w")
         f.close()
 
-    def writeFile(self, currentGameState, moveDone):
-        raise NotImplementedError
+    def writeFile(self, text):
+        f = open(self.fileName, "a")
+        f.write(text + '\n')
+        f.close()
 
     def createGameBoard(self):
         gameboard = [
@@ -49,8 +51,9 @@ class Connect4UtilsClass:
         return copiaTablero
 
     def printGameboard(self, activePlayer, gameboard):
-        print(f"\nPlayer {activePlayer} turn")
-        print(np.matrix(gameboard))
+        #print(f"\nPlayer {activePlayer} turn")
+        # print(np.matrix(gameboard))
+        return 0
 
     def getNextOpenRow(self, board, col):
         for r in range(Constants.NUM_ROWS):
@@ -213,3 +216,16 @@ class Connect4UtilsClass:
             score -= 4
 
         return score
+
+    def gameboardToTXT(self, gameboard):
+        gameboardTXT = ""
+        for r in range(len(gameboard)):
+            for c in range(len(gameboard[r])):
+                value = gameboard[r][c]
+                if(value == 0):
+                    gameboardTXT += '0'
+                elif(value == 1):
+                    gameboardTXT += '1'
+                elif(value == 2):
+                    gameboardTXT += '2'
+        return gameboardTXT
