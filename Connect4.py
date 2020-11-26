@@ -27,7 +27,7 @@ class Connect4:
         players = []
         gameover = False
         # self.computerGoesFirst()
-        if (True):
+        if (True):  # deberia ser if(computer goes first)
             players.append(self.player1)
             players.append(self.player2)
         else:
@@ -35,10 +35,9 @@ class Connect4:
             players.append(self.player1)
         # Mientras haya más de un movimiento disponible
 
-        while len(self.utils.getAvailableMoves(self.gameboard)) > 0 or not gameover:
+        while len(self.utils.getAvailableMoves(self.gameboard)) > 0 and not gameover:
             # Active player gets chosen and the piece to play on the board is set
             activePlayer = players[turnNumber % 2]
-            print(f"Turno de {activePlayer}")
             pieceValue = self.getPieceValue(activePlayer)
             # From our player info we get the collumn chosen
             collumnToPlay = self.getMove(activePlayer)
@@ -48,6 +47,7 @@ class Connect4:
             self.utils.drop_piece(
                 self.gameboard, AvailableRow, collumnToPlay, pieceValue)
             # We check the game status in the console
+            # hasta aqui funciona ak7
             self.utils.printGameboard(activePlayer, self.gameboard)
             # We check if the game is won or not
             if self.utils.winning_move(self.gameboard, pieceValue):
@@ -72,7 +72,7 @@ class Connect4:
 
     def estrategia_M(self, movimientosLegales):
         col, minimax_score = self.utils.minimax(
-            self.gameboard, Constants.MINIMAX_DEPTH, -math.inf, math.inf, True)
+            self.gameboard, Constants.MINIMAX_DEPTH, -math.inf, math.inf, True)  # alpha : -inf, beta: inf
         return col
 
     # Respuesta humana
@@ -87,4 +87,4 @@ class Connect4:
     def getMove(self, estrategia):
         availableMoves = self.utils.getAvailableMoves(self.gameboard)
         return getattr(
-            self, f"estrategia_{estrategia}", lambda: "Entrada inválida")(availableMoves)
+            self, f"estrategia_{estrategia}", lambda: "Entrada inválida")(availableMoves)  # Es como un switch y availableMoves es el parametro que se pasa

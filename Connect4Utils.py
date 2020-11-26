@@ -35,7 +35,10 @@ class Connect4UtilsClass:
             [Constants.EMPTY_VAL, Constants.EMPTY_VAL, Constants.EMPTY_VAL, Constants.EMPTY_VAL,
                 Constants.EMPTY_VAL, Constants.EMPTY_VAL, Constants.EMPTY_VAL]
         ]
-        return gameboard
+
+        board = np.zeros((6, 7))
+        # return gameboard
+        return board
 
     def copiarTablero(self, gameboard):
         copiaTablero = self.createGameBoard()
@@ -153,19 +156,17 @@ class Connect4UtilsClass:
                 if board[r][c] == piece and board[r-1][c+1] == piece and board[r-2][c+2] == piece and board[r-3][c+3] == piece:
                     return True
 
-    def score_position(self, board, piece):
-        print("ENTRO A SCORE POSITION")
-        print(board)
+    def score_position(self, board, piece):  # Este es el scary que hay que arreglar
+        # le da un puntaje al board; entre mayor puntaje, mejor es el movimiento
+        #print("ENTRO A SCORE POSITION")
+        # print(board)
         score = 0
 
         # Score center column
-        midColumn = Constants.NUM_COLUMNS // 2
-        centerPiecesCount = 0
-        for i in range(Constants.NUM_ROWS):
-            if(board[i][midColumn] == piece):
-                centerPiecesCount += 1
-
-        score += centerPiecesCount * 3
+        center_array = [int(i)
+                        for i in list(board[:, Constants.NUM_COLUMNS//2])]
+        center_count = center_array.count(piece)
+        score += center_count * 3
 
         # Score Horizontal
         for r in range(Constants.NUM_ROWS):
