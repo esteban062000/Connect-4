@@ -2,6 +2,7 @@ from Connect4Utils import Connect4UtilsClass as Utils
 import Constants
 import random
 import math
+import numpy as np
 
 
 class Connect4:
@@ -20,6 +21,9 @@ class Connect4:
         self.utils = Utils(gameIndex)
         self.utils.createFile()
         self.gameboard = self.utils.createGameBoard()
+        if(self.player1 == Constants.PLAYER_HUMAN or self.player2 == Constants.PLAYER_HUMAN):
+            print("Tablero inicial")
+            print(np.matrix(self.gameboard))
 
     def beginGame(self):
         turnNumber = 1
@@ -55,7 +59,7 @@ class Connect4:
             turnNumber += 1
 
         print(
-            f"Player {activePlayer} wins the game in {turnNumber - 1} turns!")
+            f"Player {activePlayer} wins the game in {math.ceil((turnNumber - 1)/2)} turns!")
 
     def getPieceValue(self, activePlayer):
         pieceValue = 0
@@ -77,9 +81,24 @@ class Connect4:
 
     # Respuesta humana
     def estrategia_H(self, movimientosLegales):
-        return movimientosLegales[random.randrange(0, len(movimientosLegales))]
+        entradaValida = False
+        col = ""
+        while(not entradaValida):
+            col = input(
+                "Ingrese el número de columna en la que quiere jugar\n")
+            try:
+                col = int(col)
+                if col not in movimientosLegales:
+                    print("La columna seleccionada no es válida")
+                else:
+                    entradaValida = True
+            except:
+                print("Su entrada debe ser un número")
+
+        return col
 
     # Dados los movimientos legales, escoge uno aleatoriamente
+
     def estrategia_R(self, movimientosLegales):
         return movimientosLegales[random.randrange(0, len(movimientosLegales))]
 

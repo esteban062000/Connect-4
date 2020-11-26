@@ -77,18 +77,18 @@ class Connect4UtilsClass:
             # Si el movimiento termina el juego
             if isTerminalMove:
                 # Gana el jugador minimax
-                if self.winning_move(gameboard, Constants.PLAYER_MINIMAX):
-                    return (None, Constants.PREFERED_SCENARIO)
+                if self.winning_move(gameboard, Constants.AI_VAL):
+                    return (None, 100000000000000)
                 # Gana el oponente
                 elif self.winning_move(gameboard, Constants.PLAYER_VAL):
-                    return (None, Constants.UNPREFERRED_SCENARIO)
+                    return (None, -10000000000000)
                 # Empate entre los jugadores
                 else:
                     return (None, Constants.GAME_DRAW)
             else:
                 return (None, self.score_position(gameboard, Constants.AI_VAL))
         if maximizingPlayer:
-            value = Constants.MIN_VALUE
+            value = -math.inf
             bestcolumn = random.choice(AvailableMoves)
             for col in AvailableMoves:
                 row = self.getNextOpenRow(gameboard, col)
@@ -102,9 +102,9 @@ class Connect4UtilsClass:
                 alpha = max(alpha, value)
                 if alpha >= beta:
                     break
-            return bestcolumn, new_score
+            return bestcolumn, value
         else:
-            value = Constants.MAX_VALUE
+            value = math.inf
             bestcolumn = random.choice(AvailableMoves)
             for col in AvailableMoves:
                 row = self.getNextOpenRow(gameboard, col)
@@ -118,7 +118,7 @@ class Connect4UtilsClass:
                 beta = min(beta, value)
                 if alpha >= beta:
                     break
-            return bestcolumn, new_score
+            return bestcolumn, value
 
     def is_terminal_node(self, gameboard):
         return self.winning_move(gameboard, Constants.AI_VAL) or self.winning_move(gameboard, Constants.PLAYER_VAL) or len(self.getAvailableMoves(gameboard)) == 0
@@ -204,7 +204,7 @@ class Connect4UtilsClass:
             opp_piece = Constants.AI_VAL
 
         if window.count(piece) == 4:
-            score += 100
+            score += 1000
         elif window.count(piece) == 3 and window.count(Constants.EMPTY_VAL) == 1:
             score += 5
         elif window.count(piece) == 2 and window.count(Constants.EMPTY_VAL) == 2:
