@@ -9,10 +9,10 @@ class Connect4:
 
     def __init__(self, player1, player2, gameIndex):
         '''
-        Players: Random, Minimax, Human
+        Players: Random, Minimax, Semi-Intelligent, Human
         '''
         validPlayers = [Constants.PLAYER_MINIMAX,
-                        Constants.PLAYER_HUMAN, Constants.PLAYER_RANDOM]
+                        Constants.PLAYER_HUMAN, Constants.PLAYER_RANDOM, Constants.PLAYER_SEMI]
         if(player1 in validPlayers and player2 in validPlayers):
             self.player1 = player1
             self.player2 = player2
@@ -40,6 +40,9 @@ class Connect4:
         # Mientras haya más de un movimiento disponible
 
         while len(self.utils.getAvailableMoves(self.gameboard)) > 0 and not gameover:
+            if(activePlayer == 'S' and ((players[0] == self.player1 and turnNumber == 1) or players[1] == self.player1 and turnNumber == 2)):
+                print("Primera jugada random")
+                collumnToPlay = self.getMove('R')
             # Active player gets chosen and the piece to play on the board is set
             activePlayer = players[turnNumber % 2]
             pieceValue = self.getPieceValue(activePlayer)
@@ -62,6 +65,8 @@ class Connect4:
                 text = self.utils.gameboardToTXT(self.gameboard)
                 text += str(collumnToPlay)
                 self.utils.writeFile(text)
+        # print(self.gameboard)
+        # print('\n')
 
         print(
             f"Player {activePlayer} wins the game in {math.ceil((turnNumber - 1)/2)} turns!")
@@ -106,6 +111,23 @@ class Connect4:
 
     def estrategia_R(self, movimientosLegales):
         return movimientosLegales[random.randrange(0, len(movimientosLegales))]
+
+    def estrategia_S(self, movimientosLegales):
+        piece = Constants.PLAYER_VAL
+        valid_locations = movimientosLegales
+        best_score = -10000
+        best_col = random.choice(valid_locations)
+        value = random.random()
+        if(value > Constants.PROBABILITY_OF_RANDOM):
+            for col in valid_locations:
+                row = self.utils.getNextOpenRow(self.gameboard, col)
+                temp_board = self.gameboard.copy()
+                self.utils.drop_piece(temp_board, row, col, piece)
+                score = self.utils.score_position(temp_board, piece)
+                if score > best_score:
+                    best_score = score
+                    best_col = col
+        return best_col
 
     # Define cual va a ser el movimiento de un jugador dado el estado de juego y estrategia
     def getMove(self, estrategia):
