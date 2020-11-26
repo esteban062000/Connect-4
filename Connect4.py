@@ -1,6 +1,7 @@
 from Connect4Utils import Connect4UtilsClass as Utils
 import Constants
 import random
+import math
 
 
 class Connect4:
@@ -24,106 +25,66 @@ class Connect4:
         turnNumber = 1
         activePlayer = ''
         players = []
-        if (self.computerGoesFirst()):
+        gameover = False
+        # self.computerGoesFirst()
+        if (True):
             players.append(self.player1)
             players.append(self.player2)
         else:
             players.append(self.player2)
             players.append(self.player1)
-        while self.getGameResult(self.gameboard) == Constants.GAME_STATE_NOT_ENDED:
-            # Se escoje al jugador actual
-            activePlayer = players[turnNumber % 2]
-            availableMoves = self.getAvailableMoves()
-            move = self.getMove(activePlayer, availableMoves)
+        # Mientras haya más de un movimiento disponible
 
+        while len(self.utils.getAvailableMoves(self.gameboard)) > 0 or not gameover:
+            # Active player gets chosen and the piece to play on the board is set
+            activePlayer = players[turnNumber % 2]
+            print(f"Turno de {activePlayer}")
+            pieceValue = self.getPieceValue(activePlayer)
+            # From our player info we get the collumn chosen
+            collumnToPlay = self.getMove(activePlayer)
+            AvailableRow = self.utils.getNextOpenRow(
+                self.gameboard, collumnToPlay)
+            # The piece is placed in the respective collumn
+            self.utils.drop_piece(
+                self.gameboard, AvailableRow, collumnToPlay, pieceValue)
+            # We check the game status in the console
+            self.utils.printGameboard(activePlayer, self.gameboard)
+            # We check if the game is won or not
+            if self.utils.winning_move(self.gameboard, pieceValue):
+                gameover = True
             turnNumber += 1
+
+        print(
+            f"Player {activePlayer} wins the game in {turnNumber - 1} turns!")
+
+    def getPieceValue(self, activePlayer):
+        pieceValue = 0
+        if activePlayer == Constants.PLAYER_MINIMAX:
+            pieceValue = Constants.AI_VAL
+        else:
+            pieceValue = Constants.PLAYER_VAL
+        return pieceValue
 
     def computerGoesFirst(self):
         return random.randint(0, 1)
 
-    # Devuelve un vector con las tuplas de movimientos legales dado un estado de juego
-    def getAvailableMoves(self):
-        availableMoves = []
-        for j in range(Constants.NUM_COLUMNS):
-            if self.gameboard[Constants.NUM_ROWS - 1][j] == Constants.EMPTY_VAL:
-                availableMoves.append([Constants.NUM_ROWS - 1, j])
-            else:
-                for i in range(Constants.NUM_ROWS - 1):
-                    if self.gameboard[i][j] == Constants.EMPTY_VAL and self.gameboard[i + 1][j] != Constants.EMPTY_VAL:
-                        availableMoves.append([i, j])
-        return availableMoves
+    # Implementa el algoritmo de min max para escoger el mejor movimiento posible dado un estado de juego
 
     def estrategia_M(self, movimientosLegales):
-        print("Hola M")
-        return 'a'
+        col, minimax_score = self.utils.minimax(
+            self.gameboard, Constants.MINIMAX_DEPTH, -math.inf, math.inf, True)
+        return col
 
+    # Respuesta humana
     def estrategia_H(self, movimientosLegales):
-        print("Hola H")
-        return 'a'
+        return movimientosLegales[random.randrange(0, len(movimientosLegales))]
 
+    # Dados los movimientos legales, escoge uno aleatoriamente
     def estrategia_R(self, movimientosLegales):
-        print("Hola R")
-        return 'a'
+        return movimientosLegales[random.randrange(0, len(movimientosLegales))]
 
     # Define cual va a ser el movimiento de un jugador dado el estado de juego y estrategia
-    def getMove(self, estrategia, movimientosLegales):
+    def getMove(self, estrategia):
+        availableMoves = self.utils.getAvailableMoves(self.gameboard)
         return getattr(
-            self, f"estrategia_{estrategia}", lambda: "Entrada inválida")(movimientosLegales)
-
-    def getGameResult(self, gameboard):
-        winnerFound = False
-        currentWinner = None
-        # Find winner on horizontal
-        for i in range(Constants.NUM_ROWS):
-            if not winnerFound:
-                for j in range(Constants.NUM_COLUMNS - Constants.REQUIRED_SEQUENCE - 1):
-                    if gameboard[i][j] != 0 and gameboard[i][j] == gameboard[i][j+1] and gameboard[i][j] == gameboard[i][j + 2] and \
-                            gameboard[i][j] == gameboard[i][j + 3]:
-                        currentWinner = gameboard[i][j]
-                        winnerFound = True
-
-        # Find winner on vertical
-        if not winnerFound:
-            for j in range(Constants.NUM_COLUMNS):
-                if not winnerFound:
-                    for i in range(Constants.NUM_ROWS - Constants.REQUIRED_SEQUENCE - 1):
-                        if gameboard[i][j] != 0 and gameboard[i][j] == gameboard[i+1][j] and gameboard[i][j] == gameboard[i+2][j] and \
-                                gameboard[i][j] == gameboard[i+3][j]:
-                            currentWinner = gameboard[i][j]
-                            winnerFound = True
-
-        # Check lower left diagonals
-        if not winnerFound:
-            for i in range(Constants.NUM_ROWS - Constants.REQUIRED_SEQUENCE - 1):
-                j = 0
-                while j <= i:
-                    if gameboard[i][j] != 0 and gameboard[i][i] == gameboard[i + 1][j + 1] and gameboard[i][i] == gameboard[i + 2][j + 2] and \
-                            gameboard[i][i] == gameboard[i + 3][j + 3]:
-                        currentWinner = gameboard[i][j]
-                        winnerFound = True
-                    j = j+1
-
-        # Check upper right diagonals
-        if not winnerFound:
-            for j in range(Constants.NUM_COLUMNS - Constants.REQUIRED_SEQUENCE - 1):
-                i = j
-                while i <= Constants.NUM_ROWS - Constants.REQUIRED_SEQUENCE - 1:
-                    if gameboard[i][j] != 0 and gameboard[i][i] == gameboard[i + 1][j + 1] and gameboard[i][i] == gameboard[i + 2][j + 2] and \
-                            gameboard[i][i] == gameboard[i + 3][j + 3]:
-                        currentWinner = gameboard[i][j]
-                        winnerFound = True
-                    i = i+1
-
-        if winnerFound:
-            return currentWinner
-        else:
-            drawFound = True
-            # Check for draw
-            for i in range(len(gameboard)):
-                for j in range(len(gameboard[i])):
-                    if gameboard[i][j] == Constants.EMPTY_VAL:
-                        drawFound = False
-            if drawFound:
-                return Constants.GAME_STATE_DRAW
-            else:
-                return Constants.GAME_STATE_NOT_ENDED
+            self, f"estrategia_{estrategia}", lambda: "Entrada inválida")(availableMoves)
