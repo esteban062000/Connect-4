@@ -65,8 +65,8 @@ class Connect4:
                 text = self.utils.gameboardToTXT(self.gameboard)
                 text += str(collumnToPlay)
                 self.utils.writeFile(text)
-        # print(self.gameboard)
-        # print('\n')
+        print(self.gameboard)
+        print('\n')
 
         print(
             f"Player {activePlayer} wins the game in {math.ceil((turnNumber - 1)/2)} turns!")
