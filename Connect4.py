@@ -1,4 +1,5 @@
 from Connect4Utils import Connect4UtilsClass as Utils
+from RNA import RNA
 import Constants
 import random
 import math
@@ -7,12 +8,12 @@ import numpy as np
 
 class Connect4:
 
-    def __init__(self, player1, player2, gameIndex):
+    def __init__(self, player1, player2, gameIndex, model=None):
         '''
         Players: Random, Minimax, Semi-Intelligent, Human
         '''
         validPlayers = [Constants.PLAYER_MINIMAX,
-                        Constants.PLAYER_HUMAN, Constants.PLAYER_RANDOM, Constants.PLAYER_SEMI]
+                        Constants.PLAYER_HUMAN, Constants.PLAYER_RANDOM, Constants.PLAYER_SEMI, Constants.PLAYER_NETWORK]
         if(player1 in validPlayers and player2 in validPlayers):
             self.player1 = player1
             self.player2 = player2
@@ -24,6 +25,10 @@ class Connect4:
         if(self.player1 == Constants.PLAYER_HUMAN or self.player2 == Constants.PLAYER_HUMAN):
             print("Tablero inicial")
             print(np.matrix(self.gameboard))
+        if model is not None:
+            self.model = model
+            self.player1 = Constants.PLAYER_NETWORK
+            self.player2 = Constants.PLAYER_RANDOM
 
     def beginGame(self):
         turnNumber = 1
@@ -31,7 +36,7 @@ class Connect4:
         players = []
         gameover = False
         # self.computerGoesFirst()
-        if (True):  # deberia ser if(computer goes first)
+        if (False):  # deberia ser if(computer goes first)
             players.append(self.player1)
             players.append(self.player2)
         else:
@@ -40,9 +45,6 @@ class Connect4:
         # Mientras haya más de un movimiento disponible
 
         while len(self.utils.getAvailableMoves(self.gameboard)) > 0 and not gameover:
-            if(activePlayer == 'S' and ((players[0] == self.player1 and turnNumber == 1) or players[1] == self.player1 and turnNumber == 2)):
-                print("Primera jugada random")
-                collumnToPlay = self.getMove('R')
             # Active player gets chosen and the piece to play on the board is set
             activePlayer = players[turnNumber % 2]
             pieceValue = self.getPieceValue(activePlayer)
@@ -55,7 +57,7 @@ class Connect4:
                 self.gameboard, AvailableRow, collumnToPlay, pieceValue)
             # We check the game status in the console
             # hasta aqui funciona ak7
-            self.utils.printGameboard(activePlayer, self.gameboard)
+            #self.utils.printGameboard(activePlayer, self.gameboard)
             # We check if the game is won or not
             if self.utils.winning_move(self.gameboard, pieceValue):
                 gameover = True
@@ -65,15 +67,19 @@ class Connect4:
                 text = self.utils.gameboardToTXT(self.gameboard)
                 text += str(collumnToPlay)
                 self.utils.writeFile(text)
-        print(self.gameboard)
-        print('\n')
+            # print(self.gameboard)
+            # print('\n')
 
         print(
             f"Player {activePlayer} wins the game in {math.ceil((turnNumber - 1)/2)} turns!")
+        if(activePlayer == Constants.PLAYER_NETWORK):
+            return 1
+        else:
+            return 0
 
     def getPieceValue(self, activePlayer):
         pieceValue = 0
-        if activePlayer == Constants.PLAYER_MINIMAX:
+        if activePlayer == Constants.PLAYER_MINIMAX or activePlayer == Constants.PLAYER_NETWORK:
             pieceValue = Constants.AI_VAL
         else:
             pieceValue = Constants.PLAYER_VAL
@@ -129,7 +135,13 @@ class Connect4:
                     best_col = col
         return best_col
 
-    # Define cual va a ser el movimiento de un jugador dado el estado de juego y estrategia
+    def estrategia_N(self, availableMoves):
+        output = self.model.predictNextMove(self.gameboard)
+        col = np.argmax(output[0])
+        if(col not in availableMoves):
+            col = self.estrategia_R(availableMoves)
+        return col
+
     def getMove(self, estrategia):
         availableMoves = self.utils.getAvailableMoves(self.gameboard)
         return getattr(

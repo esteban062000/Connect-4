@@ -50,8 +50,8 @@ class Connect4UtilsClass:
         return copiaTablero
 
     def printGameboard(self, activePlayer, gameboard):
-        #print(f"\nPlayer {activePlayer} turn")
-        # print(np.matrix(gameboard))
+        print(f"\nPlayer {activePlayer} turn")
+        print(np.matrix(gameboard))
         return 0
 
     def getNextOpenRow(self, board, col):

@@ -1,4 +1,5 @@
 from Connect4 import Connect4 as Connect4Game
+from RNA import RNA as NeuralNetwork
 import Constants
 
 
@@ -8,11 +9,22 @@ def main():
         print("Valor no aceptado")
         return 0
 
-    player2 = input("Digite la modalidad de juego de la computadora:\n")
+    function = int(input(
+        "Digite 1 para jugar contra la Red Neuronal o 2 para generar material de entrenamiento\n"))
+    if(function == 1):
+        model = NeuralNetwork()
+        NeuralNetworkWins = 0
+        for i in range(games):
 
-    for i in range(games):
-        game = Connect4Game(Constants.PLAYER_MINIMAX, player2, i)
-        game.beginGame()
+            game = Connect4Game(Constants.PLAYER_MINIMAX,
+                                Constants.PLAYER_RANDOM, i, model)
+            NeuralNetworkWins += game.beginGame()
+        print(f"La red gano = {NeuralNetworkWins} juegos")
+    else:
+        player2 = input("Digite la modalidad de juego de la computadora:\n")
+        for i in range(games):
+            game = Connect4Game(Constants.PLAYER_MINIMAX, player2, i)
+            game.beginGame()
 
     return 0
 

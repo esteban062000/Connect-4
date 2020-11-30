@@ -3,6 +3,7 @@ PLAYER_MINIMAX = 'M'
 PLAYER_HUMAN = 'H'
 PLAYER_RANDOM = 'R'
 PLAYER_SEMI = 'S'
+PLAYER_NETWORK = 'N'
 
 # Possible board states
 EMPTY_VAL = 0
