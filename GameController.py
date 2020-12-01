@@ -12,14 +12,28 @@ def main():
     function = int(input(
         "Digite 1 para jugar contra la Red Neuronal o 2 para generar material de entrenamiento\n"))
     if(function == 1):
-        model = NeuralNetwork()
-        NeuralNetworkWins = 0
-        for i in range(games):
+        player = int(input(
+            "Digite 3 para jugar Humano vs Red o digite otro valor para jugar Random vs Red\n"))
+        if(player == 3):
+            model = NeuralNetwork()
+            NeuralNetworkWins = 0
+            for i in range(games):
 
-            game = Connect4Game(Constants.PLAYER_MINIMAX,
-                                Constants.PLAYER_RANDOM, i, model)
-            NeuralNetworkWins += game.beginGame()
-        print(f"La red gano = {NeuralNetworkWins} juegos")
+                game = Connect4Game(Constants.PLAYER_NETWORK,
+                                    Constants.PLAYER_HUMAN, i, model)
+                NeuralNetworkWins += game.beginGame()
+            print(
+                f"La red ha ganado {NeuralNetworkWins} de un total de {games} juegos. Porcentaje de victorias = {NeuralNetworkWins/games}")
+        else:
+            model = NeuralNetwork()
+            NeuralNetworkWins = 0
+            for i in range(games):
+
+                game = Connect4Game(Constants.PLAYER_NETWORK,
+                                    Constants.PLAYER_RANDOM, i, model)
+                NeuralNetworkWins += game.beginGame()
+            print(
+                f"La red ha ganado {NeuralNetworkWins} de un total de {games} juegos. Porcentaje de victorias = {NeuralNetworkWins/games}")
     else:
         player2 = input("Digite la modalidad de juego de la computadora:\n")
         for i in range(games):

@@ -28,7 +28,7 @@ class Connect4:
         if model is not None:
             self.model = model
             self.player1 = Constants.PLAYER_NETWORK
-            self.player2 = Constants.PLAYER_RANDOM
+            self.player2 = self.player2
 
     def beginGame(self):
         turnNumber = 1
@@ -97,6 +97,7 @@ class Connect4:
 
     # Respuesta humana
     def estrategia_H(self, movimientosLegales):
+        self.utils.printGameboard(Constants.PLAYER_HUMAN, self.gameboard)
         entradaValida = False
         col = ""
         while(not entradaValida):
