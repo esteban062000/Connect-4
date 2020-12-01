@@ -55,7 +55,7 @@ class RNA:
 
     def trainNetwork(self, data, labels):
         self.model.fit(data.reshape(-1, 42), labels,
-                       epochs=10)  # Entrena la red
+                       epochs=50)  # Entrena la red
 
         # Se compara que tan buenos son los resultados
         test_loss, test_acc = self.model.evaluate(data,  labels, verbose=2)

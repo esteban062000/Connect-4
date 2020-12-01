@@ -18,7 +18,7 @@ def main():
             model = NeuralNetwork()
             NeuralNetworkWins = 0
             for i in range(games):
-
+                print(i+1)
                 game = Connect4Game(Constants.PLAYER_NETWORK,
                                     Constants.PLAYER_HUMAN, i, model)
                 NeuralNetworkWins += game.beginGame()
